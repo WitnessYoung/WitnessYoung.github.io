@@ -210,6 +210,32 @@
 <p>the sake of 为了…</p>
 <p>symptom 征兆，象征</p>
 <p>pervasive a.  遍布的、充斥各处的、弥漫的</p>
+<h2 id="05年"><a href="#05年" class="headerlink" title="05年"></a>05年</h2><p><strong>5.6</strong></p>
+<h4 id="Text-2-1"><a href="#Text-2-1" class="headerlink" title="Text 2"></a>Text 2</h4><p>argue v.主张，争辩 vi争吵</p>
+<p>buy vt.相信，接受 v购买</p>
+<p>lobby v.游说 n.大厅</p>
+<p>nonsense a. 胡言乱语</p>
+<p>out of the way 不挡道的</p>
+<p>parallel 相似物，相似特征，相似特点，平行</p>
+<p>one wave after another 前赴后继</p>
+<p>panel 专家咨询组</p>
+<p>base on 以…为基础</p>
+<p>eg：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">base important policies on the best judgments </span><br><span class="line">根据最佳判断制定重要政策（先翻译 on 后面的，再翻译base on 之间）</span><br></pre></td></tr></table></figure>
+
+<p>critical 至关重要的,批判的</p>
+<p>quarter 方面，四分之一</p>
+<p>fume n. 烟，气体 v. 冒烟，发怒</p>
+<p>press for 要求</p>
+<p>paralysis 瘫痪，麻痹</p>
+<p>steward 管理员，管家，男服务员</p>
+<p>administration 政府，管理</p>
+<p>initiative 主动权，主动性，倡议</p>
+<p>fashion 使形成，形成</p>
+<p>incentive 激励，奖励，刺激</p>
+<p>promising 大有希望</p>
+<p>sound a. 无损的，完好的，  n.声音</p>
+<p>aggrravate 加剧，恶化</p>
 
       
 
@@ -648,19 +674,19 @@
 
 
   
-    <article id="post-DVWA_XSS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-DVWA_SQLI" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/28/DVWA_XSS/">DVWA学习 XSS</a>
+      <a class="article-title" href="/2020/09/28/DVWA_SQLI/">DVWA学习 SQL Injection</a>
     </h1>
   
 
         
-        <a href="/2020/09/28/DVWA_XSS/" class="archive-article-date">
+        <a href="/2020/09/28/DVWA_SQLI/" class="archive-article-date">
   	<time datetime="2020-09-27T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-28</time>
 </a>
         
@@ -668,24 +694,24 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h1><p>XSS，全称Cross Site Scripting，即跨站脚本攻击，某种意义上也是一种注入攻击，是指攻击者在页面中注入恶意的脚本代码，当受害者访问该页面时，恶意代码会在其浏览器上执行，需要强调的是，XSS不仅仅限于JavaScript，还包括flash等其它脚本语言。根据恶意代码是否存储在服务器中，XSS可以分为存储型的XSS与反射型的XSS。</p>
-<p>DOM型的XSS由于其特殊性，常常被分为第三种，这是一种基于DOM树的XSS。例如服务器端经常使用document.boby.innerHtml等函数动态生成html页面，如果这些函数在引用某些变量时没有进行过滤或检查，就会产生DOM型的XSS。DOM型XSS可能是存储型，也有可能是反射型。</p>
+        <h1 id="SQL-Injection"><a href="#SQL-Injection" class="headerlink" title="SQL Injection"></a>SQL Injection</h1><p>SQL Injection，即SQL注入，是指攻击者通过注入恶意的SQL命令，破坏SQL查询语句的结构，从而达到执行恶意SQL语句的目的。SQL注入漏洞的危害是巨大的，常常会导致整个数据库被“脱裤”，尽管如此，SQL注入仍是现在最常见的Web漏洞之一。</p>
 <hr>
-<p>漏洞利用：</p>
+<p>手工注入思路（非盲注）：</p>
 <ol>
-<li>输入<code>&lt;script&gt;alert(/xss/)&lt;/script&gt;</code>，成功弹框：</li>
+<li>判断是否存在注入，注入是字符型还是数字型</li>
+<li>猜解SQL查询语句中的字段数</li>
+<li>确定显示的字段顺序</li>
+<li>获取当前数据库</li>
+<li>获取数据库中的表</li>
+<li>获取表中的字段名</li>
+<li>下载数据</li>
 </ol>
-<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><p>代码直接引用了name参数，并没有任何的过滤与检查，存在明显的XSS漏洞。</p>
-<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2><p>对输入进行了过滤，基于黑名单的思想，使用str_replace函数将输入中的<code>&lt;script&gt;</code>删除，这种防护机制是可以被轻松绕过的。</p>
-<ol>
-<li>双写绕过。</li>
-<li>大小写混合绕过。</li>
-</ol>
-<h2 id="high"><a href="#high" class="headerlink" title="high"></a>high</h2><p>使用黑名单过滤输入，preg_replace() 函数用于正则表达式的搜索和替换，这使得双写绕过、大小写混淆绕过（正则表达式中i表示不区分大小写）不再有效。</p>
-<ol>
-<li>虽然无法使用<code>&lt;script&gt;</code>标签注入XSS代码，但是可以通过img、body等标签的事件或者iframe等标签的src注入恶意的js代码。</li>
-</ol>
-<h2 id="impossible"><a href="#impossible" class="headerlink" title="impossible"></a>impossible</h2><p>防御思路：代码使用htmlspecialchars函数把预定义的字符&amp;、”、 ’、&lt;、&gt;转换为 HTML 实体，防止浏览器将其作为HTML元素。</p>
+<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><p>思路：Low级别的代码对来自客户端的参数id没有进行任何的检查与过滤，存在明显的SQL注入。</p>
+<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2><p>Medium级别的代码利用mysql_real_escape_string函数对特殊符号\x00,\n,\r,,‘,”,\x1a进行转义，同时前端页面设置了下拉选择表单，希望以此来控制用户的输入。</p>
+<p>虽然前端使用了下拉选择菜单，但我们依然可以通过抓包改参数，提交恶意构造的查询参数。</p>
+<h2 id="high"><a href="#high" class="headerlink" title="high"></a>high</h2><p>High级别的只是在SQL查询语句中添加了LIMIT 1，希望以此控制只输出一个结果。</p>
+<p>虽然添加了LIMIT 1，但是我们可以通过#将其注释掉。由于手工注入的过程与Low级别基本一样，直接最后一步演示下载数据。</p>
+<h2 id="impossible"><a href="#impossible" class="headerlink" title="impossible"></a>impossible</h2><p>防御思路：Impossible级别的代码采用了PDO技术，划清了代码与数据的界限，有效防御SQL注入，同时只有返回的查询结果数量为一时，才会成功输出，这样就有效预防了“脱裤”，Anti-CSRFtoken机制的加入了进一步提高了安全性。</p>
 
       
 
@@ -709,7 +735,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/09/28/DVWA_XSS/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/09/28/DVWA_SQLI/">展开全文 >></a>
         </p>
       
 
@@ -828,19 +854,19 @@
 
 
   
-    <article id="post-DVWA_SQLI" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-DVWA_XSS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/28/DVWA_SQLI/">DVWA学习 SQL Injection</a>
+      <a class="article-title" href="/2020/09/28/DVWA_XSS/">DVWA学习 XSS</a>
     </h1>
   
 
         
-        <a href="/2020/09/28/DVWA_SQLI/" class="archive-article-date">
+        <a href="/2020/09/28/DVWA_XSS/" class="archive-article-date">
   	<time datetime="2020-09-27T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-28</time>
 </a>
         
@@ -848,24 +874,24 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="SQL-Injection"><a href="#SQL-Injection" class="headerlink" title="SQL Injection"></a>SQL Injection</h1><p>SQL Injection，即SQL注入，是指攻击者通过注入恶意的SQL命令，破坏SQL查询语句的结构，从而达到执行恶意SQL语句的目的。SQL注入漏洞的危害是巨大的，常常会导致整个数据库被“脱裤”，尽管如此，SQL注入仍是现在最常见的Web漏洞之一。</p>
+        <h1 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h1><p>XSS，全称Cross Site Scripting，即跨站脚本攻击，某种意义上也是一种注入攻击，是指攻击者在页面中注入恶意的脚本代码，当受害者访问该页面时，恶意代码会在其浏览器上执行，需要强调的是，XSS不仅仅限于JavaScript，还包括flash等其它脚本语言。根据恶意代码是否存储在服务器中，XSS可以分为存储型的XSS与反射型的XSS。</p>
+<p>DOM型的XSS由于其特殊性，常常被分为第三种，这是一种基于DOM树的XSS。例如服务器端经常使用document.boby.innerHtml等函数动态生成html页面，如果这些函数在引用某些变量时没有进行过滤或检查，就会产生DOM型的XSS。DOM型XSS可能是存储型，也有可能是反射型。</p>
 <hr>
-<p>手工注入思路（非盲注）：</p>
+<p>漏洞利用：</p>
 <ol>
-<li>判断是否存在注入，注入是字符型还是数字型</li>
-<li>猜解SQL查询语句中的字段数</li>
-<li>确定显示的字段顺序</li>
-<li>获取当前数据库</li>
-<li>获取数据库中的表</li>
-<li>获取表中的字段名</li>
-<li>下载数据</li>
+<li>输入<code>&lt;script&gt;alert(/xss/)&lt;/script&gt;</code>，成功弹框：</li>
 </ol>
-<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><p>思路：Low级别的代码对来自客户端的参数id没有进行任何的检查与过滤，存在明显的SQL注入。</p>
-<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2><p>Medium级别的代码利用mysql_real_escape_string函数对特殊符号\x00,\n,\r,,‘,”,\x1a进行转义，同时前端页面设置了下拉选择表单，希望以此来控制用户的输入。</p>
-<p>虽然前端使用了下拉选择菜单，但我们依然可以通过抓包改参数，提交恶意构造的查询参数。</p>
-<h2 id="high"><a href="#high" class="headerlink" title="high"></a>high</h2><p>High级别的只是在SQL查询语句中添加了LIMIT 1，希望以此控制只输出一个结果。</p>
-<p>虽然添加了LIMIT 1，但是我们可以通过#将其注释掉。由于手工注入的过程与Low级别基本一样，直接最后一步演示下载数据。</p>
-<h2 id="impossible"><a href="#impossible" class="headerlink" title="impossible"></a>impossible</h2><p>防御思路：Impossible级别的代码采用了PDO技术，划清了代码与数据的界限，有效防御SQL注入，同时只有返回的查询结果数量为一时，才会成功输出，这样就有效预防了“脱裤”，Anti-CSRFtoken机制的加入了进一步提高了安全性。</p>
+<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><p>代码直接引用了name参数，并没有任何的过滤与检查，存在明显的XSS漏洞。</p>
+<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2><p>对输入进行了过滤，基于黑名单的思想，使用str_replace函数将输入中的<code>&lt;script&gt;</code>删除，这种防护机制是可以被轻松绕过的。</p>
+<ol>
+<li>双写绕过。</li>
+<li>大小写混合绕过。</li>
+</ol>
+<h2 id="high"><a href="#high" class="headerlink" title="high"></a>high</h2><p>使用黑名单过滤输入，preg_replace() 函数用于正则表达式的搜索和替换，这使得双写绕过、大小写混淆绕过（正则表达式中i表示不区分大小写）不再有效。</p>
+<ol>
+<li>虽然无法使用<code>&lt;script&gt;</code>标签注入XSS代码，但是可以通过img、body等标签的事件或者iframe等标签的src注入恶意的js代码。</li>
+</ol>
+<h2 id="impossible"><a href="#impossible" class="headerlink" title="impossible"></a>impossible</h2><p>防御思路：代码使用htmlspecialchars函数把预定义的字符&amp;、”、 ’、&lt;、&gt;转换为 HTML 实体，防止浏览器将其作为HTML元素。</p>
 
       
 
@@ -889,7 +915,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/09/28/DVWA_SQLI/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/09/28/DVWA_XSS/">展开全文 >></a>
         </p>
       
 
@@ -1119,19 +1145,19 @@
 
 
   
-    <article id="post-DVWA_IC" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-DVWA_CSRF" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/27/DVWA_IC/">DVWA学习 Insecure Captcha</a>
+      <a class="article-title" href="/2020/09/27/DVWA_CSRF/">DVWA学习 CSRF</a>
     </h1>
   
 
         
-        <a href="/2020/09/27/DVWA_IC/" class="archive-article-date">
+        <a href="/2020/09/27/DVWA_CSRF/" class="archive-article-date">
   	<time datetime="2020-09-26T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-27</time>
 </a>
         
@@ -1139,16 +1165,38 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="Insecure-Captcha"><a href="#Insecure-Captcha" class="headerlink" title="Insecure Captcha"></a>Insecure Captcha</h1><p>不安全的验证码，CAPTCHA是Completely Automated Public Turing Test to Tell Computers and Humans Apart (全自动区分计算机和人类的图灵测试)的简称。但个人觉得，这一模块的内容叫做不安全的验证流程更妥当些，因为这块主要是验证流程出现了逻辑漏洞，谷歌的验证码表示不背这个锅。</p>
+        <h1 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h1><p>CSRF，全称Cross-site request forgery，翻译过来就是跨站请求伪造，是指利用受害者尚未失效的身份认证信息（cookie、会话等），诱骗其点击恶意链接或者访问包含攻击代码的页面，在受害人不知情的情况下以受害者的身份向（身份认证信息所对应的）服务器发送请求，从而完成非法操作（如转账、改密等）。CSRF与XSS最大的区别就在于，CSRF并没有盗取cookie而是直接利用。</p>
+<hr>
+<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><p>服务器收到修改密码的请求后，会检查参数password_new与password_conf是否相同，如果相同，就会修改密码，并没有任何的防CSRF机制（当然服务器对请求的发送者是做了身份验证的，是检查的cookie，只是这里的代码没有体现）。</p>
+<p>漏洞利用</p>
+<ol>
+<li>构造链接： <a target="_blank" rel="noopener" href="http://127.0.0.1/dvwa/vulnerabilities/csrf/?password_new=password&amp;password_conf=password&amp;Change=Change#">http://127.0.0.1/dvwa/vulnerabilities/csrf/?password_new=password&amp;password_conf=password&amp;Change=Change#</a></li>
+</ol>
+<ul>
+<li>需要注意的是，CSRF最关键的是利用受害者的cookie向服务器发送伪造请求，所以如果受害者之前用Chrome浏览器登录的这个系统，而用搜狗浏览器点击这个链接，攻击是不会触发的，因为搜狗浏览器并不能利用Chrome浏览器的cookie，所以会自动跳转到登录界面。</li>
+</ul>
+<ol start="2">
+<li>构造短链接隐藏URL：<a target="_blank" rel="noopener" href="http://suo.im/5W51jX">http://suo.im/5W51jX</a></li>
+</ol>
+<ul>
+<li>虽然利用了短链接隐藏url，但受害者最终还是会看到密码修改成功的页面，所以这种攻击方法也并不高明。</li>
+</ul>
+<ol start="3">
+<li>构造攻击页面<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;http://192.168.153.130/dvwa/vulnerabilities/csrf/?password_new=hack&amp;password_conf=hack&amp;Change=Change#&quot;</span> <span class="attr">border</span>=<span class="string">&quot;0&quot;</span> <span class="attr">style</span>=<span class="string">&quot;display:none;&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>404<span class="tag">&lt;<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>file not found.<span class="tag">&lt;<span class="name">h2</span>&gt;</span></span><br></pre></td></tr></table></figure>
+当受害者访问html页面时时，会误认为是自己点击的是一个失效的url，但实际上已经遭受了CSRF攻击，密码已经被修改为了hack。<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2>Medium级别的代码检查了保留变量 HTTP_REFERER（http包头的Referer参数的值，表示来源地址）中是否包含SERVER_NAME（http包头的Host参数，及要访问的主机名，这里是192.168.153.130），希望通过这种机制抵御CSRF攻击。</li>
+</ol>
 <p>漏洞利用：</p>
 <ol>
-<li>通过构造参数绕过验证过程，通过抓包更改参数。</li>
-<li>由于没有任何的防CSRF机制，我们可以轻易地构造攻击页面。</li>
+<li>过滤规则是http包头的Referer参数的值中必须包含主机名（127.0.0.1）</li>
 </ol>
-<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><p>思路：服务器将改密操作分成了两步，第一步检查用户输入的验证码，验证通过后，服务器返回表单，第二步客户端提交post请求，服务器完成更改密码的操作。但是，这其中存在明显的逻辑漏洞，服务器仅仅通过检查Change、step 参数来判断用户是否已经输入了正确的验证码。</p>
-<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2><p>思路：Medium级别的代码在第二步验证时，参加了对参数passed_captcha的检查，如果参数值为true，则认为用户已经通过了验证码检查，然而用户依然可以通过伪造参数绕过验证，本质上来说，这与Low级别的验证没有任何区别。</p>
-<h2 id="high"><a href="#high" class="headerlink" title="high"></a>high</h2><p> 思路：服务器的验证逻辑是当$resp（这里是指谷歌返回的验证结果）是false，并且参数recaptcha_response_field不等于hidd3n_valu3（或者http包头的User-Agent参数不等于reCAPTCHA）时，就认为验证码输入错误，反之则认为已经通过了验证码的检查。<br> 搞清楚了验证逻辑，剩下就是伪造绕过了，由于$resp参数我们无法控制，所以重心放在参数recaptcha_response_field、User-Agent上。</p>
-<h2 id="impossible"><a href="#impossible" class="headerlink" title="impossible"></a>impossible</h2><p> 防御思路：增加了Anti-CSRF token 机制防御CSRF攻击，利用PDO技术防护sql注入，验证过程终于不再分成两部分了，验证码无法绕过，同时要求用户输入之前的密码，进一步加强了身份认证。</p>
+<p>我们可以将攻击页面命名为127.0.0.1.html（页面被放置在攻击者的服务器里）就可以绕过了。</p>
+<h2 id="high"><a href="#high" class="headerlink" title="high"></a>high</h2><p>High级别的代码加入了Anti-CSRF token机制，用户每次访问改密页面时，服务器会返回一个随机的token，向服务器发起请求时，需要提交token参数，而服务器在收到请求时，会优先检查token，只有token正确，才会处理客户端的请求。</p>
+<p>漏洞利用：<br>要绕过High级别的反CSRF机制，关键是要获取token，要利用受害者的cookie去修改密码的页面获取关键的token。</p>
+<p>试着去构造一个攻击页面，将其放置在攻击者的服务器，引诱受害者访问，从而完成CSRF攻击。</p>
+<p>然而理想与现实的差距是巨大的，这里牵扯到了跨域问题，而现在的浏览器是不允许跨域请求的。这里简单解释下跨域，我们的框架iframe访问的地址是<a target="_blank" rel="noopener" href="http://192.168.153.130/dvwa/vulnerabilities/csrf%EF%BC%8C%E4%BD%8D%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8192.168.153.130%E4%B8%8A%EF%BC%8C%E8%80%8C%E6%88%91%E4%BB%AC%E7%9A%84%E6%94%BB%E5%87%BB%E9%A1%B5%E9%9D%A2%E4%BD%8D%E4%BA%8E%E9%BB%91%E5%AE%A2%E6%9C%8D%E5%8A%A1%E5%99%A810.4.253.2%E4%B8%8A%EF%BC%8C%E4%B8%A4%E8%80%85%E7%9A%84%E5%9F%9F%E5%90%8D%E4%B8%8D%E5%90%8C%EF%BC%8C%E5%9F%9F%E5%90%8DB%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E9%A1%B5%E9%9D%A2%E9%83%BD%E4%B8%8D%E5%85%81%E8%AE%B8%E4%B8%BB%E5%8A%A8%E8%8E%B7%E5%8F%96%E5%9F%9F%E5%90%8DA%E4%B8%8B%E7%9A%84%E9%A1%B5%E9%9D%A2%E5%86%85%E5%AE%B9%EF%BC%8C%E9%99%A4%E9%9D%9E%E5%9F%9F%E5%90%8DA%E4%B8%8B%E7%9A%84%E9%A1%B5%E9%9D%A2%E4%B8%BB%E5%8A%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF%E7%BB%99%E5%9F%9F%E5%90%8DB%E7%9A%84%E9%A1%B5%E9%9D%A2%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E4%BB%AC%E7%9A%84%E6%94%BB%E5%87%BB%E8%84%9A%E6%9C%AC%E6%98%AF%E4%B8%8D%E5%8F%AF%E8%83%BD%E5%8F%96%E5%88%B0%E6%94%B9%E5%AF%86%E7%95%8C%E9%9D%A2%E4%B8%AD%E7%9A%84user_token%E3%80%82">http://192.168.153.130/dvwa/vulnerabilities/csrf，位于服务器192.168.153.130上，而我们的攻击页面位于黑客服务器10.4.253.2上，两者的域名不同，域名B下的所有页面都不允许主动获取域名A下的页面内容，除非域名A下的页面主动发送信息给域名B的页面，所以我们的攻击脚本是不可能取到改密界面中的user_token。</a></p>
+<p>由于跨域是不能实现的，所以我们要将攻击代码注入到目标服务器192.168.153.130中，才有可能完成攻击。下面利用High级别的XSS漏洞协助获取Anti-CSRF token（因为这里的XSS注入有长度限制，不能够注入完整的攻击脚本，所以只获取Anti-CSRF token）。</p>
+<h2 id="impossble"><a href="#impossble" class="headerlink" title="impossble"></a>impossble</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_GET[ <span class="string">&#x27;Change&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// 检查token</span></span><br><span class="line">    checkToken( $_REQUEST[ <span class="string">&#x27;user_token&#x27;</span> ], $_SESSION[ <span class="string">&#x27;session_token&#x27;</span> ], <span class="string">&#x27;index.php&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取输入，在原有基础上需要输入当前密码</span></span><br><span class="line">    $pass_curr = $_GET[ <span class="string">&#x27;password_current&#x27;</span> ];</span><br><span class="line">    $pass_new  = $_GET[ <span class="string">&#x27;password_new&#x27;</span> ];</span><br><span class="line">    $pass_conf = $_GET[ <span class="string">&#x27;password_conf&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理密码中的特殊字符，防止SQL注入</span></span><br><span class="line">    $pass_curr = stripslashes( $pass_curr ); <span class="comment">// 去反斜杠 &#x27;\&#x27;</span></span><br><span class="line">    $pass_curr = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $pass_curr ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">    $pass_curr = md5( $pass_curr );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查询输入的当前密码是否正确</span></span><br><span class="line">    $data = $db-&gt;prepare( <span class="string">&#x27;SELECT password FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;&#x27;</span> );</span><br><span class="line">    $data-&gt;bindParam( <span class="string">&#x27;:user&#x27;</span>, dvwaCurrentUser(), PDO::PARAM_STR );</span><br><span class="line">    $data-&gt;bindParam( <span class="string">&#x27;:password&#x27;</span>, $pass_curr, PDO::PARAM_STR );</span><br><span class="line">    $data-&gt;execute();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果新密码和确认密码相等，且输入的当前密码正确</span></span><br><span class="line">    <span class="keyword">if</span>( ( $pass_new == $pass_conf ) &amp;&amp; ( $data-&gt;rowCount() == <span class="number">1</span> ) ) &#123;</span><br><span class="line">        <span class="comment">// 处理新密码中的特殊字符，防止SQL注入</span></span><br><span class="line">        $pass_new = stripslashes( $pass_new );</span><br><span class="line">        $pass_new = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $pass_new ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">        $pass_new = md5( $pass_new );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 更新密码</span></span><br><span class="line">        $data = $db-&gt;prepare( <span class="string">&#x27;UPDATE users SET password = (:password) WHERE user = (:user);&#x27;</span> );</span><br><span class="line">        $data-&gt;bindParam( <span class="string">&#x27;:password&#x27;</span>, $pass_new, PDO::PARAM_STR );</span><br><span class="line">        $data-&gt;bindParam( <span class="string">&#x27;:user&#x27;</span>, dvwaCurrentUser(), PDO::PARAM_STR );</span><br><span class="line">        $data-&gt;execute();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 反馈成功信息</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123; <span class="comment">// 两次密码输入不一致，失败</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;Passwords did not match or current password incorrect.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generate Anti-CSRF token</span></span><br><span class="line">generateSessionToken();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>防御思路：Impossible级别的代码利用PDO技术防御SQL注入，至于防护CSRF，则要求用户输入原始密码（简单粗暴），攻击者在不知道原始密码的情况下，无论如何都无法进行CSRF攻击。 </p>
 
       
 
@@ -1172,7 +1220,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/09/27/DVWA_IC/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/09/27/DVWA_CSRF/">展开全文 >></a>
         </p>
       
 
