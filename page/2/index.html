@@ -139,19 +139,19 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-DVWA_CSRF" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-DVWA_FU" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/27/DVWA_CSRF/">DVWA学习 CSRF</a>
+      <a class="article-title" href="/2020/09/27/DVWA_FU/">DVWA学习 File Upload</a>
     </h1>
   
 
         
-        <a href="/2020/09/27/DVWA_CSRF/" class="archive-article-date">
+        <a href="/2020/09/27/DVWA_FU/" class="archive-article-date">
   	<time datetime="2020-09-26T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-27</time>
 </a>
         
@@ -159,38 +159,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h1><p>CSRF，全称Cross-site request forgery，翻译过来就是跨站请求伪造，是指利用受害者尚未失效的身份认证信息（cookie、会话等），诱骗其点击恶意链接或者访问包含攻击代码的页面，在受害人不知情的情况下以受害者的身份向（身份认证信息所对应的）服务器发送请求，从而完成非法操作（如转账、改密等）。CSRF与XSS最大的区别就在于，CSRF并没有盗取cookie而是直接利用。</p>
+        <h1 id="file-upload"><a href="#file-upload" class="headerlink" title="file upload"></a>file upload</h1><p>File Upload，即文件上传漏洞，通常是由于对上传文件的类型、内容没有进行严格的过滤、检查，使得攻击者可以通过上传木马获取服务器的webshell权限，因此文件上传漏洞带来的危害常常是毁灭性的，Apache、Tomcat、Nginx等都曝出过文件上传漏洞。</p>
 <hr>
-<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><p>服务器收到修改密码的请求后，会检查参数password_new与password_conf是否相同，如果相同，就会修改密码，并没有任何的防CSRF机制（当然服务器对请求的发送者是做了身份验证的，是检查的cookie，只是这里的代码没有体现）。</p>
-<p>漏洞利用</p>
-<ol>
-<li>构造链接： <a target="_blank" rel="noopener" href="http://127.0.0.1/dvwa/vulnerabilities/csrf/?password_new=password&amp;password_conf=password&amp;Change=Change#">http://127.0.0.1/dvwa/vulnerabilities/csrf/?password_new=password&amp;password_conf=password&amp;Change=Change#</a></li>
-</ol>
-<ul>
-<li>需要注意的是，CSRF最关键的是利用受害者的cookie向服务器发送伪造请求，所以如果受害者之前用Chrome浏览器登录的这个系统，而用搜狗浏览器点击这个链接，攻击是不会触发的，因为搜狗浏览器并不能利用Chrome浏览器的cookie，所以会自动跳转到登录界面。</li>
-</ul>
-<ol start="2">
-<li>构造短链接隐藏URL：<a target="_blank" rel="noopener" href="http://suo.im/5W51jX">http://suo.im/5W51jX</a></li>
-</ol>
-<ul>
-<li>虽然利用了短链接隐藏url，但受害者最终还是会看到密码修改成功的页面，所以这种攻击方法也并不高明。</li>
-</ul>
-<ol start="3">
-<li>构造攻击页面<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;http://192.168.153.130/dvwa/vulnerabilities/csrf/?password_new=hack&amp;password_conf=hack&amp;Change=Change#&quot;</span> <span class="attr">border</span>=<span class="string">&quot;0&quot;</span> <span class="attr">style</span>=<span class="string">&quot;display:none;&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>404<span class="tag">&lt;<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>file not found.<span class="tag">&lt;<span class="name">h2</span>&gt;</span></span><br></pre></td></tr></table></figure>
-当受害者访问html页面时时，会误认为是自己点击的是一个失效的url，但实际上已经遭受了CSRF攻击，密码已经被修改为了hack。<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2>Medium级别的代码检查了保留变量 HTTP_REFERER（http包头的Referer参数的值，表示来源地址）中是否包含SERVER_NAME（http包头的Host参数，及要访问的主机名，这里是192.168.153.130），希望通过这种机制抵御CSRF攻击。</li>
-</ol>
 <p>漏洞利用：</p>
 <ol>
-<li>过滤规则是http包头的Referer参数的值中必须包含主机名（127.0.0.1）</li>
+<li>上传文件hack.php（一句话木马）用菜刀向服务器发送包含apple参数的post请求，在服务器上执行任意命令，获取webshell权限。可以下载、修改服务器的所有文件。</li>
+<li>对文件类型有要求，抓包修改上传文件类型。再用菜刀获取权限。</li>
+<li>截断绕过规则</li>
 </ol>
-<p>我们可以将攻击页面命名为127.0.0.1.html（页面被放置在攻击者的服务器里）就可以绕过了。</p>
-<h2 id="high"><a href="#high" class="headerlink" title="high"></a>high</h2><p>High级别的代码加入了Anti-CSRF token机制，用户每次访问改密页面时，服务器会返回一个随机的token，向服务器发起请求时，需要提交token参数，而服务器在收到请求时，会优先检查token，只有token正确，才会处理客户端的请求。</p>
-<p>漏洞利用：<br>要绕过High级别的反CSRF机制，关键是要获取token，要利用受害者的cookie去修改密码的页面获取关键的token。</p>
-<p>试着去构造一个攻击页面，将其放置在攻击者的服务器，引诱受害者访问，从而完成CSRF攻击。</p>
-<p>然而理想与现实的差距是巨大的，这里牵扯到了跨域问题，而现在的浏览器是不允许跨域请求的。这里简单解释下跨域，我们的框架iframe访问的地址是<a target="_blank" rel="noopener" href="http://192.168.153.130/dvwa/vulnerabilities/csrf%EF%BC%8C%E4%BD%8D%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8192.168.153.130%E4%B8%8A%EF%BC%8C%E8%80%8C%E6%88%91%E4%BB%AC%E7%9A%84%E6%94%BB%E5%87%BB%E9%A1%B5%E9%9D%A2%E4%BD%8D%E4%BA%8E%E9%BB%91%E5%AE%A2%E6%9C%8D%E5%8A%A1%E5%99%A810.4.253.2%E4%B8%8A%EF%BC%8C%E4%B8%A4%E8%80%85%E7%9A%84%E5%9F%9F%E5%90%8D%E4%B8%8D%E5%90%8C%EF%BC%8C%E5%9F%9F%E5%90%8DB%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E9%A1%B5%E9%9D%A2%E9%83%BD%E4%B8%8D%E5%85%81%E8%AE%B8%E4%B8%BB%E5%8A%A8%E8%8E%B7%E5%8F%96%E5%9F%9F%E5%90%8DA%E4%B8%8B%E7%9A%84%E9%A1%B5%E9%9D%A2%E5%86%85%E5%AE%B9%EF%BC%8C%E9%99%A4%E9%9D%9E%E5%9F%9F%E5%90%8DA%E4%B8%8B%E7%9A%84%E9%A1%B5%E9%9D%A2%E4%B8%BB%E5%8A%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF%E7%BB%99%E5%9F%9F%E5%90%8DB%E7%9A%84%E9%A1%B5%E9%9D%A2%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E4%BB%AC%E7%9A%84%E6%94%BB%E5%87%BB%E8%84%9A%E6%9C%AC%E6%98%AF%E4%B8%8D%E5%8F%AF%E8%83%BD%E5%8F%96%E5%88%B0%E6%94%B9%E5%AF%86%E7%95%8C%E9%9D%A2%E4%B8%AD%E7%9A%84user_token%E3%80%82">http://192.168.153.130/dvwa/vulnerabilities/csrf，位于服务器192.168.153.130上，而我们的攻击页面位于黑客服务器10.4.253.2上，两者的域名不同，域名B下的所有页面都不允许主动获取域名A下的页面内容，除非域名A下的页面主动发送信息给域名B的页面，所以我们的攻击脚本是不可能取到改密界面中的user_token。</a></p>
-<p>由于跨域是不能实现的，所以我们要将攻击代码注入到目标服务器192.168.153.130中，才有可能完成攻击。下面利用High级别的XSS漏洞协助获取Anti-CSRF token（因为这里的XSS注入有长度限制，不能够注入完整的攻击脚本，所以只获取Anti-CSRF token）。</p>
-<h2 id="impossble"><a href="#impossble" class="headerlink" title="impossble"></a>impossble</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_GET[ <span class="string">&#x27;Change&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// 检查token</span></span><br><span class="line">    checkToken( $_REQUEST[ <span class="string">&#x27;user_token&#x27;</span> ], $_SESSION[ <span class="string">&#x27;session_token&#x27;</span> ], <span class="string">&#x27;index.php&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取输入，在原有基础上需要输入当前密码</span></span><br><span class="line">    $pass_curr = $_GET[ <span class="string">&#x27;password_current&#x27;</span> ];</span><br><span class="line">    $pass_new  = $_GET[ <span class="string">&#x27;password_new&#x27;</span> ];</span><br><span class="line">    $pass_conf = $_GET[ <span class="string">&#x27;password_conf&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理密码中的特殊字符，防止SQL注入</span></span><br><span class="line">    $pass_curr = stripslashes( $pass_curr ); <span class="comment">// 去反斜杠 &#x27;\&#x27;</span></span><br><span class="line">    $pass_curr = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $pass_curr ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">    $pass_curr = md5( $pass_curr );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查询输入的当前密码是否正确</span></span><br><span class="line">    $data = $db-&gt;prepare( <span class="string">&#x27;SELECT password FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;&#x27;</span> );</span><br><span class="line">    $data-&gt;bindParam( <span class="string">&#x27;:user&#x27;</span>, dvwaCurrentUser(), PDO::PARAM_STR );</span><br><span class="line">    $data-&gt;bindParam( <span class="string">&#x27;:password&#x27;</span>, $pass_curr, PDO::PARAM_STR );</span><br><span class="line">    $data-&gt;execute();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果新密码和确认密码相等，且输入的当前密码正确</span></span><br><span class="line">    <span class="keyword">if</span>( ( $pass_new == $pass_conf ) &amp;&amp; ( $data-&gt;rowCount() == <span class="number">1</span> ) ) &#123;</span><br><span class="line">        <span class="comment">// 处理新密码中的特殊字符，防止SQL注入</span></span><br><span class="line">        $pass_new = stripslashes( $pass_new );</span><br><span class="line">        $pass_new = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $pass_new ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">        $pass_new = md5( $pass_new );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 更新密码</span></span><br><span class="line">        $data = $db-&gt;prepare( <span class="string">&#x27;UPDATE users SET password = (:password) WHERE user = (:user);&#x27;</span> );</span><br><span class="line">        $data-&gt;bindParam( <span class="string">&#x27;:password&#x27;</span>, $pass_new, PDO::PARAM_STR );</span><br><span class="line">        $data-&gt;bindParam( <span class="string">&#x27;:user&#x27;</span>, dvwaCurrentUser(), PDO::PARAM_STR );</span><br><span class="line">        $data-&gt;execute();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 反馈成功信息</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;Password Changed.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123; <span class="comment">// 两次密码输入不一致，失败</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;Passwords did not match or current password incorrect.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generate Anti-CSRF token</span></span><br><span class="line">generateSessionToken();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>防御思路：Impossible级别的代码利用PDO技术防御SQL注入，至于防护CSRF，则要求用户输入原始密码（简单粗暴），攻击者在不知道原始密码的情况下，无论如何都无法进行CSRF攻击。 </p>
+<p>在php版本小于5.3.4的服务器中，当Magic_quote_gpc选项为off时，可以在文件名中使用%00截断，所以可以把上传文件命名为hack.php%00.png。可以看到，包中的文件类型为image/png，可以通过文件类型检查。<br>4. 对类似high中含 getimagesize函数的文件上传利用copy将一句话木马文件php.php与图片文件1.jpg合并。再上传文件，再利用菜刀添加shell拿到权限。 </p>
+<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><p>思路：文件上传漏洞的利用是有限制条件的，首先当然是要能够成功上传木马文件，其次上传文件必须能够被执行，最后就是上传文件的路径必须可知。不幸的是，这里三个条件全都满足。</p>
+<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2><p>思路：Medium级别的代码对上传文件的类型、大小做了限制，要求文件类型必须是jpeg或者png，大小不能超过100000B（约为97.6KB）。</p>
+<h2 id="high"><a href="#high" class="headerlink" title="high"></a>high</h2><p>思路： strrpos(string,find,start)</p>
+<p>函数返回字符串find在另一字符串string中最后一次出现的位置，如果没有找到字符串则返回false，可选参数start规定在何处开始搜索。</p>
+<p>getimagesize(string filename)</p>
+<p>函数会通过读取文件头，返回图片的长、宽等信息，如果没有相关的图片文件头，函数会报错。</p>
+<p>可以看到，High级别的代码读取文件名中最后一个”.”后的字符串，期望通过文件名来限制文件类型，因此要求上传文件名形式必须是”*.jpg”、”*.jpeg” 、”*.png”之一。同时，getimagesize函数更是限制了上传文件的文件头必须为图像类型。</p>
+<h2 id="impossible"><a href="#impossible" class="headerlink" title="impossible"></a>impossible</h2><p>防御思路：Impossible级别的代码对上传文件进行了重命名（为md5值，导致%00截断无法绕过过滤规则），加入Anti-CSRF token防护CSRF攻击，同时对文件的内容作了严格的检查，导致攻击者无法上传含有恶意脚本的文件。</p>
 
       
 
@@ -214,7 +199,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/09/27/DVWA_CSRF/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/09/27/DVWA_FU/">展开全文 >></a>
         </p>
       
 
@@ -420,11 +405,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">dvwa</a>
+                <a href="javascript:void(0)" class="js-tag color5">DVWA</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">DVWA</a>
+                <a href="javascript:void(0)" class="js-tag color5">dvwa</a>
               </li>
              
               <li class="article-tag-list-item">
